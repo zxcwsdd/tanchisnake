@@ -1,4 +1,4 @@
-#pragma once
+#pragma once	///111111111111111
 #ifndef _SNAKE_H_
 #define _SNAKE_H_
 #include <time.h>
