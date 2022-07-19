@@ -1,0 +1,174 @@
+#include "snake.h"
+#include <iostream>
+
+//SetConsoleCursorPosition()库函数
+//修改控制台光标的位置
+int main(void)
+{
+	CONSOLE_CURSOR_INFO cci;
+	cci.dwSize = sizeof(cci);
+	cci.bVisible = FALSE;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cci);
+
+	srand(time(NULL));	//播种随机数种子
+
+	initSnake();	//初始化蛇
+	initFood();	//初始化食物
+
+	initWall();	//画墙
+	initUI();	//画蛇和食物
+	
+	playGame();	//启动游戏
+
+	//打印分数
+	showScore();
+	system("pause");
+	return EXIT_SUCCESS;
+}
+
+
+void initSnake(void)
+{
+	snake.size = 2;	 //算上蛇头
+	//初始化蛇头
+	snake.body[0].x = LENGTH / 2;
+	snake.body[0].y = WIDE / 2;
+	//初始化一节蛇身	
+	snake.body[1].x = snake.body[0].x - 1;
+	snake.body[1].y = snake.body[0].y;
+	return;
+}
+void initFood(void)
+{
+	food.x = rand() % (LENGTH - 2) + 1;
+	//食物 的x坐标 0-59
+	food.y = rand() % (WIDE - 2) + 1;
+	//食物 的y坐标 0-19
+	return;
+}
+void initUI(void)
+{
+	COORD coord{ 0 };	//光标移动的位置coord
+	//画蛇
+	for (size_t i = 0; i < snake.size; i++)
+	{
+		coord.X = snake.body[i].x;
+		coord.Y = snake.body[i].y;
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+		if (i == 0)
+			cout.put('@');
+		else
+			cout.put('*');
+	}
+	//蛇移动之后，去除蛇尾
+	coord.X = lastX;
+	coord.Y = lastY;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+	cout.put(' ');
+
+	//画食物
+	coord.X = food.x;
+	coord.Y = food.y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+	cout.put('#');
+
+}
+
+void playGame(void)
+{	//蛇不死  就是死循环执行。
+
+	char key = 'd';	//默认向右走
+
+	//判断蛇撞墙s
+	while ((snake.body[0].x >= 0 && snake.body[0].x < LENGTH)
+		&& (snake.body[0].y >= 0 && snake.body[0].y < WIDE))
+	{
+		//更新蛇
+
+		initUI();
+		//接收用户按键输入  wasd
+		if (_kbhit())	//为真时，说明有用户输入
+			key = _getch();//不阻塞的接收用户输入且不回显
+
+		switch (key)
+		{
+		case 'w':kx = 0; ky = -1; break;
+		case 'a':kx = -1; ky = 0; break;
+		case 's':kx = 0; ky = +1; break;
+		case 'd':kx = +1; ky = 0; break;
+		default:
+			break;
+		}
+
+
+		//蛇头撞身体： 蛇头 == 蛇身任意一节
+		for (size_t i = 1; i < snake.size; i++)
+		{
+			if (snake.body[i].x == snake.body[0].x
+				&& snake.body[i].y == snake.body[0].y)
+				return;//直接结束游戏;
+		}
+
+		//蛇头撞食物
+		if (snake.body[0].x == food.x
+			&& snake.body[0].y == food.y)
+		{
+			//食物消失
+			initFood();
+			//身体增长
+			snake.size++;
+			//加分
+			score++;
+			//加速
+			if (sleepTime > 100)
+				sleepTime -= 10;
+		}
+
+		//存储蛇尾坐标
+		lastX = snake.body[snake.size - 1].x;
+		lastY = snake.body[snake.size - 1].y;
+		//蛇移动：前一节身体给后一节身体赋值
+	//放在 吃到食物之后，可以起到加长身体的作用
+		for (size_t i = snake.size - 1; i > 0; --i)
+		{
+			snake.body[i].x = snake.body[i - 1].x;
+			snake.body[i].y = snake.body[i - 1].y;
+		}
+		snake.body[0].x += kx;
+		snake.body[0].y += ky;
+
+		Sleep(sleepTime);
+		//清屏
+		//system("cls");
+	}
+
+}
+void initWall(void)
+{
+	for (size_t i = 0; i <= WIDE; i++)
+	{
+		for (size_t j = 0; j <= LENGTH; j++)
+		{
+			if (j == LENGTH)
+				cout.put('|');
+			else if (i == WIDE)
+				cout.put('_');
+			else
+				cout.put(' ');
+		}
+		cout << endl;
+	}
+}
+
+void showScore(void)
+{
+	COORD coord;
+	//将光标默认位置移动到，不干扰游戏的任意位置.
+	coord.X = 0;
+	coord.Y = WIDE + 2;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+	cout << "Game Over!\n";
+	cout << "成绩为:" << score << endl;
+}
