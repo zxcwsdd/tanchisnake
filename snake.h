@@ -6,7 +6,7 @@
 #include <iostream>
 //两个头文件  控制光标
 #include <conio.h>
-#include <Windows.h>
+#include <Windows.h>//可替换为#include<bits/stdc.h>
 #define LENGTH 60
 #define WIDE 20
 using namespace std;
