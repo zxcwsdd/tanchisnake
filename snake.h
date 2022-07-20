@@ -48,13 +48,10 @@ void initSnake(void);
 //全局变量 snake  不需要传参数
 //初始化食物
 void initFood(void);
-
 //初始化界面控件
 void initUI(void);
-
 //开始游戏
 void playGame(void);
-
 void initWall(void);//初始化墙
 
 void showScore(void);
@@ -132,7 +129,6 @@ void showScore(void);
 	//	蛇身增长： snake.size++;
 	// 食物消失：(产生一个新的食物) initFood();
 	// 加分：score+=10;
-//////
 	//}
 
 
@@ -145,7 +141,6 @@ void showScore(void);
 //coord.Y = 1astY;
 //在移动光标位置  那个函数
 //输出一个‘ ’空格取代那个蛇尾的'*'
-
 
 
 ////去除光标:
