@@ -1,4 +1,5 @@
 # tanchisnake
+c++经典项目贪吃蛇游戏
 a little game ，
 use w s a d to control the route。
 try to eating as much money，
