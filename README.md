@@ -13,4 +13,3 @@ so lets start now!
 
 other:Any discussions, suggestions and questions are welcome  
 
-![](https://github.com/zxcwsdd/tanchisnake/blob/main/tanchisnake1.jpg)
